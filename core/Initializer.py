@@ -12,7 +12,6 @@ from pathlib import Path
 
 import os
 
-
 YAML = '/boot/ProjectAlice.yaml'
 ASOUND = '/etc/asound.conf'
 SNIPS_TOML = '/etc/snips.toml'
@@ -23,7 +22,6 @@ class InitDict(dict):
 
 	def __init__(self, default: dict):
 		super().__init__(default)
-
 
 	def __getitem__(self, item):
 		try:
@@ -39,18 +37,14 @@ class SimpleLogger:
 		self._prepend = f'[{prepend}]\t '
 		self._logger = logging.getLogger('ProjectAlice')
 
-
 	def logInfo(self, text: str):
 		self._logger.info(f'{self._prepend} {text}')
-
 
 	def logWarning(self, text: str):
 		self._logger.warning(f'{self._prepend} {text}')
 
-
 	def logError(self, text: str):
 		self._logger.error(f'{self._prepend} {text}')
-
 
 	def logFatal(self, text: str):
 		self._logger.fatal(f'{self._prepend} {text}')
@@ -73,7 +67,6 @@ class PreInit:
 		self.initFile = Path(YAML)
 		self.initConfs = dict()
 
-
 	def start(self):
 		if not self.initFile.exists() and not self.confsFile.exists():
 			self._logger.logFatal('Init file not found and there\'s no configuration file, aborting Project Alice start')
@@ -86,7 +79,7 @@ class PreInit:
 		self.checkWPASupplicant()
 		self.checkInternet()
 		self.installSystemDependencies()
-		self.doUpdates()
+		# self.doUpdates()
 		self.installSystemDependencies()
 		if not self.checkVenv():
 			self.setServiceFileTo('venv')
@@ -96,11 +89,9 @@ class PreInit:
 
 		return True
 
-
 	def installSystemDependencies(self):
 		reqs = [line.rstrip('\n') for line in open(Path(self.rootDir, 'sysrequirements.txt'))]
 		subprocess.run(['sudo', 'apt-get', 'install', '-y', '--allow-unauthenticated'] + reqs)
-
 
 	def loadConfig(self) -> dict:
 
@@ -129,11 +120,9 @@ class PreInit:
 
 			return initConfs
 
-
 	@staticmethod
 	def isVenv() -> bool:
 		return hasattr(sys, 'real_prefix') or (hasattr(sys, 'base_prefix') and sys.base_prefix != sys.prefix)
-
 
 	def checkWPASupplicant(self):
 		wpaSupplicant = Path('/etc/wpa_supplicant/wpa_supplicant.conf')
@@ -156,7 +145,6 @@ class PreInit:
 			subprocess.run(['sudo', 'mv', str(file), bootWpaSupplicant])
 			self._logger.logInfo('Successfully initialized wpa_supplicant.conf')
 			self.reboot()
-
 
 	def doUpdates(self):
 		subprocess.run(['git', 'config', '--global', 'user.name', '"An Other"'])
@@ -183,13 +171,11 @@ class PreInit:
 
 		subprocess.run(['git', 'stash', 'clear'])
 
-
 	@staticmethod
 	def reboot():
 		time.sleep(1)
 		subprocess.run(['sudo', 'shutdown', '-r', 'now'])
 		exit(0)
-
 
 	def restart(self):
 		sys.stdout.flush()
@@ -212,7 +198,6 @@ class PreInit:
 		python = sys.executable
 		os.execl(python, python, *sys.argv)
 
-
 	def checkInternet(self):
 		try:
 			socket.create_connection(('www.google.com', 80))
@@ -222,7 +207,6 @@ class PreInit:
 
 		if not connected:
 			self._logger.logFatal('Your device needs internet access to continue')
-
 
 	def getUpdateSource(self, definedSource: str) -> str:
 		updateSource = 'master'
@@ -259,7 +243,6 @@ class PreInit:
 
 		return str(updateSource)
 
-
 	def checkVenv(self) -> bool:
 		if not Path('venv').exists():
 			self._logger.logInfo('Not running with venv, I need to create it')
@@ -275,11 +258,9 @@ class PreInit:
 
 		return True
 
-
 	def updateVenv(self):
 		subprocess.run([self.PIP, 'uninstall', '-y', '-r', str(Path(self.rootDir, 'pipuninstalls.txt'))])
 		subprocess.run([self.PIP, 'install', '-r', str(Path(self.rootDir, 'requirements.txt'))])
-
 
 	@staticmethod
 	def setServiceFileTo(pointer: str):
@@ -313,7 +294,6 @@ class Initializer:
 		self._confsSample = Path(self._preInit.rootDir, 'configTemplate.py')
 		self._confsFile = self._preInit.confsFile
 		self._rootDir = self._preInit.rootDir
-
 
 	def initProjectAlice(self) -> bool:  # NOSONAR
 		if not self._preInit.start():
@@ -350,22 +330,16 @@ class Initializer:
 		# noinspection PyUnresolvedReferences
 		confs = config.settings.copy()
 
-
-		subprocess.run(['sudo', 'apt', 'install', '-y', f'./system/snips/snips-platform-common_0.64.0_armhf.deb'])
-		subprocess.run(['sudo', 'apt', 'install', '-y', f'./system/snips/snips-nlu_0.64.0_armhf.deb'])
+		subprocess.run(['sudo', 'apt', 'install', '-y', f'./system/snips/snips-platform-common_0.64.0_amd64.deb'])
+		subprocess.run(['sudo', 'apt', 'install', '-y', f'./system/snips/snips-nlu_0.64.0_amd64.deb'])
 		subprocess.run(['sudo', 'systemctl', 'stop', 'snips-nlu'])
 		subprocess.run(['sudo', 'systemctl', 'disable', 'snips-nlu'])
-		subprocess.run(['sudo', 'apt', 'install', '-y', f'./system/snips/snips-hotword_0.64.0_armhf.deb'])
+		subprocess.run(['sudo', 'apt', 'install', '-y', f'./system/snips/snips-hotword_0.64.0_amd64.deb'])
 		subprocess.run(['sudo', 'systemctl', 'stop', 'snips-hotword'])
 		subprocess.run(['sudo', 'systemctl', 'disable', 'snips-hotword'])
-		subprocess.run(['sudo', 'apt', 'install', '-y', f'./system/snips/snips-hotword-model-heysnipsv4_0.64.0_armhf.deb'])
+		subprocess.run(['sudo', 'apt', 'install', '-y', f'./system/snips/snips-hotword-model-heysnipsv4_0.64.0_amd64.deb'])
 
-		subprocess.run(['wget', 'http://ftp.us.debian.org/debian/pool/non-free/s/svox/libttspico0_1.0+git20130326-9_armhf.deb'])
-		subprocess.run(['wget', 'http://ftp.us.debian.org/debian/pool/non-free/s/svox/libttspico-utils_1.0+git20130326-9_armhf.deb'])
-		subprocess.run(['sudo', 'apt', 'install', '-y', './libttspico0_1.0+git20130326-9_armhf.deb', './libttspico-utils_1.0+git20130326-9_armhf.deb'])
-
-		subprocess.run(['rm', 'libttspico0_1.0+git20130326-9_armhf.deb'])
-		subprocess.run(['rm', 'libttspico-utils_1.0+git20130326-9_armhf.deb'])
+		subprocess.run(['sudo', 'apt', 'install', '-y', 'libttspico0', 'libttspico-utils'])
 
 		confPath = Path('/etc/mosquitto/conf.d/websockets.conf')
 		if not confPath.exists():
@@ -409,7 +383,7 @@ class Initializer:
 			confs['awsAccessKey'] = initConfs['awsAccessKey']
 			confs['awsSecretKey'] = initConfs['awsSecretKey']
 
-			confs['asr'] = initConfs['asr'] if initConfs['asr'] in {'pocketsphinx', 'google', 'deepspeech', 'snips'} else 'deepspeech'
+			confs['asr'] = initConfs['asr'] if initConfs['asr'] in {'pocketsphinx', 'google', 'deepspeech', 'snips', 'vosk'} else 'deepspeech'
 			if confs['asr'] == 'google' and not initConfs['googleServiceFile']:
 				self._logger.logInfo('You cannot use Google Asr without a google service file, falling back to Deepspeech')
 				confs['asr'] = 'deepspeech'
@@ -471,23 +445,11 @@ class Initializer:
 		except:
 			self._logger.logInfo("Snips NLU not installed, let's do this")
 			subprocess.run(['sudo', 'apt-get', 'install', 'libatlas3-base', 'libgfortran5'])
-			subprocess.run(['wget', '--content-disposition', 'https://github.com/project-alice-assistant/snips-nlu-rebirth/blob/master/wheels/scikit_learn-0.22.1-cp37-cp37m-linux_armv7l.whl?raw=true'])
-			subprocess.run(['wget', '--content-disposition', 'https://github.com/project-alice-assistant/snips-nlu-rebirth/blob/master/wheels/scipy-1.3.3-cp37-cp37m-linux_armv7l.whl?raw=true'])
-			subprocess.run(['wget', '--content-disposition', 'https://github.com/project-alice-assistant/snips-nlu-rebirth/blob/master/wheels/snips_nlu_utils-0.9.1-cp37-cp37m-linux_armv7l.whl?raw=true'])
-			subprocess.run(['wget', '--content-disposition', 'https://github.com/project-alice-assistant/snips-nlu-rebirth/blob/master/wheels/snips_nlu_parsers-0.4.3-cp37-cp37m-linux_armv7l.whl?raw=true'])
-			subprocess.run(['wget', '--content-disposition', 'https://github.com/project-alice-assistant/snips-nlu-rebirth/blob/master/wheels/snips_nlu-0.20.2-py3-none-any.whl?raw=true'])
-			time.sleep(1)
-			subprocess.run([self.PIP, 'install', 'scipy-1.3.3-cp37-cp37m-linux_armv7l.whl'])
-			subprocess.run([self.PIP, 'install', 'scikit_learn-0.22.1-cp37-cp37m-linux_armv7l.whl'])
-			subprocess.run([self.PIP, 'install', 'snips_nlu_utils-0.9.1-cp37-cp37m-linux_armv7l.whl'])
-			subprocess.run([self.PIP, 'install', 'snips_nlu_parsers-0.4.3-cp37-cp37m-linux_armv7l.whl'])
-			subprocess.run([self.PIP, 'install', 'snips_nlu-0.20.2-py3-none-any.whl'])
-			time.sleep(1)
-			subprocess.run(['rm', 'scipy-1.3.3-cp37-cp37m-linux_armv7l.whl'])
-			subprocess.run(['rm', 'scikit_learn-0.22.1-cp37-cp37m-linux_armv7l.whl'])
-			subprocess.run(['rm', 'snips_nlu_utils-0.9.1-cp37-cp37m-linux_armv7l.whl'])
-			subprocess.run(['rm', 'snips_nlu_parsers-0.4.3-cp37-cp37m-linux_armv7l.whl'])
-			subprocess.run(['rm', 'snips_nlu-0.20.2-py3-none-any.whl'])
+			subprocess.run([self.PIP, 'install', 'scipy'])
+			subprocess.run([self.PIP, 'install', 'scikit_learn'])
+			subprocess.run([self.PIP, 'install', 'snips_nlu_utils'])
+			subprocess.run([self.PIP, 'install', 'snips_nlu_parsers'])
+			subprocess.run([self.PIP, 'install', 'snips_nlu'])
 			subprocess.run(['./venv/bin/snips-nlu', 'download', confs['activeLanguage']])
 
 		snipsConf = self.loadSnipsConfigurations()
@@ -643,10 +605,10 @@ class Initializer:
 
 		subprocess.run(['sudo', 'rm', '-rf', Path(self._rootDir, 'assistant')])
 
-		subprocess.run(['sudo', 'sed', '-i', '-e', 's/#dtparam=i2c_arm=on/dtparam=i2c_arm=on/', '/boot/config.txt'])
-		subprocess.run(['sudo', 'sed', '-i', '-e', 's/#dtparam=spi=on/dtparam=spi=on/', '/boot/config.txt'])
+		# subprocess.run(['sudo', 'sed', '-i', '-e', 's/#dtparam=i2c_arm=on/dtparam=i2c_arm=on/', '/boot/config.txt'])
+		# subprocess.run(['sudo', 'sed', '-i', '-e', 's/#dtparam=spi=on/dtparam=spi=on/', '/boot/config.txt'])
 
-		subprocess.run(['sudo', 'timedatectl', 'set-timezone', confs['timezone']])
+		# subprocess.run(['sudo', 'timedatectl', 'set-timezone', confs['timezone']])
 
 		if initConfs['keepYAMLBackup']:
 			subprocess.run(['sudo', 'mv', Path(YAML), Path('/boot/ProjectAlice.yaml.bak')])
@@ -660,8 +622,8 @@ class Initializer:
 
 		self._logger.logWarning('Initializer done with configuring')
 		time.sleep(2)
-		subprocess.run(['sudo', 'shutdown', '-r', 'now'])
-
+		# subprocess.run(['sudo', 'shutdown', '-r', 'now'])
+		return True
 
 	def loadSnipsConfigurations(self) -> dict:
 		self._logger.logInfo('Loading Snips configuration file')
@@ -674,7 +636,6 @@ class Initializer:
 
 		import toml
 		return toml.load(snipsConfig)
-
 
 	@staticmethod
 	def newConfs():

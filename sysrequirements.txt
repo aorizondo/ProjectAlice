@@ -24,3 +24,7 @@ flac
 libatlas-base-dev
 gfortran
 ffmpeg
+libttspico0
+libttspico-utils
+libatlas3-base
+libgfortran5
