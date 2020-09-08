@@ -100,7 +100,7 @@ class MycroftTts(Tts):
 			return False
 
 		try:
-			self.Commons.runRootSystemCommand(['sudo', Path(self.Commons.rootDir(), 'system/scripts/installMycroftMimic.sh')])
+			self.Commons.runRootSystemCommand(['sudo', str(Path(self.Commons.rootDir(), 'system/scripts/installMycroftMimic.sh'))])
 		except:
 			return False
 		else:

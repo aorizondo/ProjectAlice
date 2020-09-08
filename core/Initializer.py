@@ -77,7 +77,7 @@ class PreInit:
 
 		self.initConfs = self.loadConfig()
 		self.checkWPASupplicant()
-		self.checkInternet()
+		# self.checkInternet()
 		self.installSystemDependencies()
 		# self.doUpdates()
 		self.installSystemDependencies()

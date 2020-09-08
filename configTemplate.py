@@ -217,7 +217,7 @@ settings = {
 		'defaultValue': 'deepspeech',
 		'dataType'    : 'list',
 		'isSensitive' : False,
-		'values'      : ['deepspeech', 'pocketsphinx', 'google', 'snips'],
+		'values'      : ['deepspeech', 'pocketsphinx', 'google', 'snips', 'vosk'],
 		'description' : 'The Asr to use. Can\'t use an online Asr if you have set keepASROffline to true!',
 		'onUpdate'    : 'reloadASR',
 		'category'    : 'asr'

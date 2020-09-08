@@ -51,7 +51,7 @@ class VoskAsr(Asr):
 		# self.modelSpk = Model(f'{self.Commons.rootDir()}/trained/asr/vosk/model/{self.LanguageManager.activeLanguageAndCountryCode.lower()}')
 
 	def checkLanguage(self) -> bool:
-		if not Path(self.Commons.rootDir(), f'/trained/asr/vosk/model/{self.LanguageManager.activeLanguageAndCountryCode.lower()}').exists():
+		if not Path(self.Commons.rootDir(), f'trained/asr/vosk/model/{self.LanguageManager.activeLanguageAndCountryCode.lower()}').exists():
 			self.logInfo('Missing language model')
 			return False
 
@@ -61,7 +61,7 @@ class VoskAsr(Asr):
 	def downloadLanguage(self) -> bool:
 		self.logInfo(f'Downloading language model for "{self.LanguageManager.activeLanguage}"')
 
-		directory = Path(self.Commons.rootDir(), '/trained/asr/vosk/model/', self.LanguageManager.activeLanguageAndCountryCode.lower())
+		directory = Path(self.Commons.rootDir(), 'trained/asr/vosk/model/', self.LanguageManager.activeLanguageAndCountryCode.lower())
 		for url in self.LANGUAGE_PACK:
 			url = url.replace('%lang%', self.LanguageManager.activeLanguageAndCountryCode.lower())
 			filename = Path(url).name
