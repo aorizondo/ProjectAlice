@@ -20,17 +20,17 @@ version: 1.22
 # Always add a space after the ":" (e.g. deviceName: default instead of deviceName:default)
 
 # If you place this file into /boot after a first initialization it won't overwrite your settings unless you set this to yes
-forceRewrite: no
+forceRewrite: yes
 
 # After initialization is done, keep a copy of this yaml file in /boot. Be aware this can be a security risk, as /boot is accessible by anyone mounting your SD card!
-keepYAMLBackup: no
+keepYAMLBackup: yes
 
 # Base configs
 # Set the admin pin code. This code will allow you to access the interface. Only numbers, 4 digits
 adminPinCode: 1234
 
 # Enter Wifi credentials for automatic adding of tasmota/zigbee/netatmo devices even when Alice has wired access
-useWifi: yes
+useWifi: no
 wifiNetworkName:
 wifiWPAPass:
 wifiCountryCode:
@@ -59,15 +59,16 @@ audioHardware:
 
 # System
 # Whether to install Hermes Led Control or not. HLC is the best way to manage your device leds if you have any
-useHLC: yes
+useHLC: no
 
+stayCompletlyOffline: yes
 keepASROffline: yes
 keepTTSOffline: yes
-skillAutoUpdate: yes
+skillAutoUpdate: no
 webInterfaceActive: yes
 
 # enabling dev mode unlocks features on the console as well as unpublished skill loading
-devMode: no
+devMode: yes
 
 # You should leave this by default, but who knows
 newDeviceBroadcastPort: 12354
@@ -79,13 +80,13 @@ activeLanguage: en
 # The language country code
 activeCountryCode: US
 
-baseCurrency: CHF
+baseCurrency: CUC
 
 # Either 'metric', 'kelvin' or 'imperial'
 baseUnits: metric
 
 # Your timezone. For a complete list check this wiki: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
-timezone: Europe/Zurich
+timezone: America/Havana
 
 # Telemetry data, such as temperature, pressure, humidity and others depending on your sensors can be kept in your internal database for forecast or AI use
 enableDataStoring: yes
@@ -103,7 +104,7 @@ shortReplies: no
 whisperWhenSleeping: no
 
 # Either 'pocketsphinx', 'deepspeech', 'snips' (EN only) or 'google'
-asr: pocketsphinx
+asr: snips
 
 # Either 'pico', 'mycroft', 'amazon', 'google' or 'watson'
 tts: pico
