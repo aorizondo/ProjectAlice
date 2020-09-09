@@ -20,7 +20,7 @@
 							maxbachmann <https://github.com/maxbachmann>
 """
 
-from core.Initializer import Initializer
+from hooks.debian import Initializer
 Initializer().initProjectAlice()
 
 import logging.handlers
